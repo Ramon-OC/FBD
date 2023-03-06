@@ -1,7 +1,10 @@
 import csv, re, os
 from datetime import datetime
+from pathlib import Path
 
 salir = True
+prod_dict = {}
+
 
 def leer_archivo_Empleados():
     try:
@@ -352,9 +355,130 @@ def menu_principal():
         elif opcion == 2:
             pass
         elif opcion == 3:
-            pass
+            menu_productos()
         elif opcion == 4:
             salir = False
             break
+
+def leer_archivo_productos():
+    path = Path(__file__).parent / "productos.csv"
+    try:
+        with path.open('r') as archivo:
+            reader = csv.DictReader(archivo, delimiter=';')
+            for row in reader:
+                k = row["nombre"]+row["sucursal"]
+                prod_dict[k] = row
+                #for string in row:
+                    #print(string+":", {row[string]})
+    except FileNotFoundError:
+        print(" - El archivo no existe.")
+
+def escribir_archivo_productos():
+    prod_attr = ["nombre","precio","cantidad","marca","presentacion","sucursal","stock","refrigeracion","elaboracion","caducidad"]
+    path = Path(__file__).parent / "productos.csv"
+    if not bool(prod_dict):
+        leer_archivo_productos()
+    try:
+        with path.open('w') as archivo:
+            writer = csv.DictWriter(archivo, fieldnames=prod_attr)
+            writer.writeheader()
+            for k,data in prod_dict.items():
+                    writer.writerow(data)
+    except FileNotFoundError:
+        print(" - El archivo no existe.")
+    except:
+        print("hubo un problema escribiendo el archivo, sorry")
+
+def agregar_producto():
+    if not bool(prod_dict):
+        leer_archivo_productos()
+    nombre = input("Ingrese el nombre del artículo: ")
+    sucursal = validar_numero(1,15,"Ingrese el número de sucursal del producto: ","Verifique el número de sucursal.")
+    precio = validar_float(0.01,100000,"Ingrese el precio del producto: ","verifique el precio del articulo.")
+    presentacion = input("Ingrese la presentación (lata, caja, bote, etc) del artículo: ")
+    cantidad = input("Ingrese la cantidad marcada en el empaque (i.e. 1kg, 1L, pza, etc): ")
+    marca = input("Ingrese la marca del artículo: ")
+    stock = validar_numero(0,10000,"Ingrese el número productos en inventario: ","Verifique la cantidad en el inventario.")
+    refrigeracion = validar_booleano("Ingrese TRUE si el articulo necesita ser refrigerado, en otro caso ingrese FALSE. ","Vuela a intentarlo.")
+    elaboracion = validar_fecha("Introduzca fecha de caducidad en formato YYYY-MM-DD: ","Intente de nuevo.")
+    caducidad = validar_fecha("Introduzca fecha de caducidad en formato YYYY-MM-DD :","Intente de nuevo.")
+    prod_dict[nombre + str(sucursal)] = {"nombre" : nombre,"precio" : precio,"cantidad" : cantidad,"marca" : marca,"presentacion" : presentacion,"sucursal" : sucursal,"stock" : stock,"refrigeracion" : refrigeracion,"elaboracion" : elaboracion,"caducidad":caducidad}
+
+
+def validar_fecha(mensaje,error):
+    while True:
+        try:
+            fecha = input(mensaje)
+            if not re.match("^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$", fecha):
+                raise Exception()
+            else:
+                return fecha  
+        except:
+            print(error)
+
+def validar_numero(min,max,mensaje,error):
+    while True:
+        try:
+            i = int(input(mensaje))
+            if i >= min and i <= max:
+                return i
+            else:
+                raise Exception()
+        except:
+            print(error)
+
+def validar_float(min,max,mensaje,error):
+    while True:
+        try:
+            i = float(input(mensaje))
+            if i >= min and i <= max:
+                return i
+            else:
+                raise Exception()
+        except:
+            print(error)
+
+def validar_booleano(mensaje,error):
+    while True:
+        try:
+            val = input(mensaje)
+            if val == "TRUE" or val == "FALSE":
+                return val
+            else:
+                raise Exception()
+        except:
+            print(error)
+
+def menu_productos():
+    while True:
+        #os.system('clear')
+        print("\nMenu Productos - El Gran Abarrotero")
+        print("     1. Realizar una consulta")
+        print("     2. Registrar a un nuevo producto")
+        print("     3. Modificar la informacion de un producto")
+        print("     4. Regresar al menu principal")
+        opcion = input("Seleccione una opcion: ")
+        if opcion == "1":
+            leer_archivo_productos()
+            elige_prod = input("Por favor ingrese el nombre del producto que desea consultar: ")
+            elige_sucursal = input("Ingrese el número de sucursal: ")
+            k = elige_prod+elige_sucursal
+            try:
+                for y in prod_dict[k]:
+                    print(y,':',prod_dict[k][y])
+            except KeyError:
+                print("No se encuentra el producto solicitado en la sucursal indicada")        
+        elif opcion == "2":
+            agregar_producto()
+            escribir_archivo_productos()
+        elif opcion == "3":
+            agregar_producto()
+            escribir_archivo_productos()
+        elif opcion == "4":
+            menu_principal()
+            break
+        else:
+            print(" - No es una opcion valida")
+
         
 menu_principal()
