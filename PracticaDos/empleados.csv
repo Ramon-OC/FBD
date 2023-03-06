@@ -1,3 +1,20 @@
 id;nombre;direccion;correos;telefonos;fechaNacimiento;cargo;sucursal
-1;EmpleadoUno;Calle Uno;uno@uno.com;1234567890;01/01/2001;Encargado;1
-2;EmpleadoDos;Calle Dos;dos@dos.com;1234567890;02/07/2002;Gerente;2
+1;Jorge Flores;Calle:1;jorge1@correo.com;5532157890;14/08/1987;Encargado;3
+2;María Sánchez;Calle:2;maria2@correo.com;5512345678;23/12/1992;Gerente;7
+3;Pedro Hernández;Calle:3;pedro3@correo.com;5543218765;05/06/1989;Cajero;11
+4;Ana Morales;Calle:4;ana4@correo.com;5523456789;15/02/1991;Encargado;6
+5;Sofía García;Calle:5;sofia5@correo.com;5511112222;18/09/1995;Gerente;12
+6;Miguel Torres;Calle:6;miguel6@correo.com;5533334444;22/07/1986;Cajero;10
+7;Laura Ruiz;Calle:7;laura7@correo.com;5522223333;19/01/1990;Encargado;2
+8;Eduardo Díaz;Calle:8;eduardo8@correo.com;5512345678;02/08/1994;Gerente;5
+9;Carla Rodríguez;Calle:9;carla9@correo.com;5533332222;10/06/1988;Cajero;8
+10;Daniel Ortiz;Calle:10;daniel10@correo.com;5544445555;23/03/1992;Encargado;14
+11;Luisa López;Calle:11;luisa11@correo.com;5532167890;14/09/1996;Gerente;9
+12;Javier Cruz;Calle:12;javier12@correo.com;5511112222;05/05/1985;Cajero;1
+13;Fernanda Torres;Calle:13;fernanda13@correo.com;5543219876;26/04/1993;Encargado;15
+14;José Ramírez;Calle:14;jose14@correo.com;5532109876;09/11/1989;Gerente;13
+15;Verónica Castro;Calle:15;veronica15@correo.com;5523456789;01/01/1997;Cajero;4
+16;Hugo Muñoz;Calle:16;hugo16@correo.com;5532157890;28/05/1987;Encargado;6
+17;Adriana García;Calle:17;adriana17@correo.com;5512345678;12/11/1992;Gerente;10
+18;Joaquín Morales;Calle:18;joaquin18@correo.com;5543218765;03/09/1989;Cajero;9
+19;Marisol Hernández;Calle:19;marisol19@correo.com;5523456789;22/07/1991;Encargado;5
