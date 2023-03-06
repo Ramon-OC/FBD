@@ -7,6 +7,9 @@ prod_dict = {}
 
 
 def leer_archivo_Empleados():
+    """
+    Imprime todos los registros de empleados en el archivo empleados.csv
+    """
     try:
         with open('empleados.csv', 'r') as archivo:
             reader = csv.DictReader(archivo, delimiter=';')
@@ -19,6 +22,10 @@ def leer_archivo_Empleados():
     os.system('clear')
 
 def consultas_Empleados():
+     """
+     Menú de consultas de los empleados: permite ver todos los registros o filtrar por su cargo
+     dentro de la tienda, se solicita la ocupación e imprime todos los que tengan esa ocurrencia.
+     """
      while True:
         os.system('clear')
         print("\nConsultas de empleados")
@@ -44,6 +51,10 @@ def consultas_Empleados():
             break
 
 def filtro_cargo():
+    '''
+    Filtra por su cargo a los empleados, solicita una opción e imprime a todos los que tengan 
+    una ocurrencia en la columna de cargo y corresponda a lo pedido.
+    '''
     encontrado = False
     os.system('clear')
     print("\nQue cargo te gustaria consultar?")
@@ -90,6 +101,10 @@ def filtro_cargo():
     os.system('clear')
 
 def escribir_archivo_Empleados():
+    '''
+    Se encarga de registrar a un empleado (escribe su linea en el archivo). Se valida que 
+    todos los datos por escribir correspondan a lo solicitado.
+    '''
     os.system('clear')
     id = genera_id("empleados.csv")  
     nombre = input("Escriba el nombre del empleado: ")
@@ -110,6 +125,10 @@ def escribir_archivo_Empleados():
     os.system('clear')
 
 def editar_archivo_empleado():  
+    '''
+    Método que permite modificar uno de los atributos del empleado, verifica que la nueva entrada 
+    corresponda al formato esperado y se vuelve a escribir en el archivo.
+    '''
     os.system('clear')
 
     id_buscar = input("Ingrese el ID del empleado que desea editar: ")
@@ -182,7 +201,11 @@ def editar_archivo_empleado():
     input("\nPresione ENTER para continuar")    
     os.system('clear')
 
-def genera_id(nombre_archivo): # Creo que se puede usar para todos mientras su primer atributo sea ''id''
+def genera_id(nombre_archivo): 
+    '''
+    Se genera un identificador para el registro del nuevo usuario, si no hay empleados registrados, 
+    el id será 1. Caso contrario se toma el último registro, se suma 1 al id y se le asigna al nuevo.
+    '''
     with open(nombre_archivo, "r") as archivo:
         lector_csv = csv.reader(archivo, delimiter=";")
         filas = list(lector_csv)
@@ -193,7 +216,9 @@ def genera_id(nombre_archivo): # Creo que se puede usar para todos mientras su p
             return ultimo_id + 1
 
 def eliminar_empleado():
-
+    '''
+    Mediante el identificador del empleado, se puede eliminar su registro del archivo
+    '''
     id_empleado = input("Escriba el ID del empleado que busca eliminar: ")
     
     with open("empleados.csv", 'r', newline='') as archivo:
@@ -228,6 +253,10 @@ def eliminar_empleado():
 # Definición de capturas
 
 def captura_correos():
+    '''
+    Se solicita el número de correos que se desea registrar, se piden y concatenan por comas. 
+    Cada uno se valida mediante una expresión regular.
+    '''
     email_regex = r"[^@]+@[^@]+\.[^@]+" 
     while True:
         try:
@@ -247,6 +276,10 @@ def captura_correos():
     return correo_registro
 
 def captura_telefonos():
+    '''
+    Se solicita el número de telefonos que se desea registrar, se piden y concatenan por comas. 
+    Para que un número sea valido, debe de tener diez digitos.
+    '''
     while True:
         try:
             n =  int(input("Ingresa el numero de telefonos que deseas registrar: "))
@@ -265,9 +298,10 @@ def captura_telefonos():
     telefono_registro = ", ".join(telefonos)
     return telefono_registro
 
-
-
 def captura_fecha():
+    '''
+    Se solicita una fecha y verifica que sea valida y respete el formato dd/mm/aaaa
+    '''
     fecha_regex = r"\d{2}/\d{2}/\d{4}" 
     while True:
         fecha = input("Ingresa tu fecha en formato dd/mm/aaaa: ")
@@ -281,6 +315,9 @@ def captura_fecha():
             print("La fecha no tiene el formato dd/mm/aaaa.")
 
 def captura_cargo():
+    '''
+    Se despliega un mení solicitando uno de los posibles cargos para el registro de un empleado.
+    '''
     opciones = ['Encargado', 'Gerente', 'Cajero']
     while True:
         print(" - Selecciona una opción de cargo:")
@@ -298,6 +335,9 @@ def captura_cargo():
 # Definición de menús
 
 def menu_empleados():
+    '''
+    Menú para cada una de las operaciones que se pueden hacer con los empleados.
+    '''
     estatus_menu_empleados = True
     while estatus_menu_empleados and salir:
         os.system('clear')
