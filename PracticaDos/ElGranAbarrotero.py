@@ -3,16 +3,91 @@ from datetime import datetime
 
 salir = True
 
-def leer_archivo_Empleados(): # Podriamos hacer un lector y escritor general para los tres .cvs, pero está de hueva xD
+def leer_archivo_Empleados():
     try:
         with open('empleados.csv', 'r') as archivo:
             reader = csv.DictReader(archivo, delimiter=';')
             for row in reader:
                 print(f"Id: {row['id']}, Nombre: {row['nombre']}, Direccion: {row['direccion']}, Correos: {row['correos']}, Telefonos: {row['telefonos']}, Fecha de Nacimiento: {row['fechaNacimiento']}, Cargo: {row['cargo']}, Sucursal: {row['sucursal']}")
     except FileNotFoundError:
-        print(" - El archivo no existe.")
+        print("- El archivo empleados.csv no existe")
+    
+    input("\nPresione ENTER para continuar")    
+    os.system('clear')
+
+def consultas_Empleados():
+     while True:
+        os.system('clear')
+        print("\nConsultas de empleados")
+        print("     1. Mostrar todos los empleados registrados")
+        print("     2. Filtrar empleados por su cargo")
+        print("     3. Volver al menu de empleados")
+
+        while True:
+            try:
+                opcion = int(input("Seleccione una opcion: "))
+                if opcion < 1 or opcion > 3:
+                    raise ValueError
+                break
+            except ValueError:
+                print("- No es una opcion valida ")
+
+        if opcion == 1:
+            leer_archivo_Empleados()
+        elif opcion == 2:
+            filtro_cargo()
+        elif opcion == 3:
+            menu_empleados()
+            break
+
+def filtro_cargo():
+    encontrado = False
+    os.system('clear')
+    print("\nQue cargo te gustaria consultar?")
+    print("     1. Encargado")
+    print("     2. Gerente")
+    print("     3. Cajero")
+    print("     4. Regresar al menu de empleados")
+
+    while True:
+        try:
+            opcion = int(input("Seleccione una opcion: "))
+            if opcion < 1 or opcion > 4:
+                 raise ValueError
+            break
+        except ValueError:
+            print("- No es una opcion valida")
+
+    if opcion == 1:
+        cargo_buscar = "Encargado"
+    elif opcion == 2:
+        cargo_buscar = "Gerente"
+    elif opcion == 3:
+        cargo_buscar = "Cajero"
+    elif opcion == 4:
+        menu_empleados()
+
+    with open("empleados.csv", "r") as archivo_csv:
+        lector_csv = csv.reader(archivo_csv, delimiter=";")    
+        filas = []
+        for fila in lector_csv:
+            filas.append(fila)
+        
+        for fila in filas:
+            if fila[6] == "cargo": # Ignora la primera fila (atributos)
+                continue 
+            if fila[6] == cargo_buscar:
+                encontrado = True
+                print(" - Id: ", fila[0], ", Nombre: ", fila[1], ", Direccion: ", fila[2], ", Correos: ", fila[3], ", Telefonos: ", fila[4], ", Fecha de nacimiento: ", fila[5], ", Cargo: ", fila[6], ", Sucursal: ", fila[7])                    
+        
+        if encontrado == False:
+            print("\n - No se encontraron empleados registrados con ese cargo")
+    
+    input("\nPresione ENTER para continuar")    
+    os.system('clear')
 
 def escribir_archivo_Empleados():
+    os.system('clear')
     id = genera_id("empleados.csv")  
     nombre = input("Escriba el nombre del empleado: ")
     direccion = input("Escriba su direccion: ")
@@ -27,8 +102,13 @@ def escribir_archivo_Empleados():
         writer = csv.writer(archivo, delimiter=';')
         writer.writerow([id, nombre, direccion, correos, telefonos, fechaNacimiento, cargo, sucursal])
     print("Se ha registrado a "+nombre+" correctamente!\nSu ID es: "+str(id))
+    
+    input("\nPresione ENTER para continuar")    
+    os.system('clear')
 
-def editar_archivo():  
+def editar_archivo_empleado():  
+    os.system('clear')
+
     id_buscar = input("Ingrese el ID del empleado que desea editar: ")
     encontrado = False
     
@@ -62,21 +142,30 @@ def editar_archivo():
                 print("     5. Fecha de Nacimiento")
                 print("     6. Cargo")
                 print("     7. Sucursal")
-                opcion = input("Seleccione una opcion: ")
 
-                if opcion == "1":
+                while True:
+                    try:
+                        opcion = int(input("Seleccione una opcion: "))
+                        if opcion < 1 or opcion > 7:
+                            raise ValueError
+                        break
+                    except ValueError:
+                        print("- No es una opcion valida ")
+
+
+                if opcion == 1:
                     fila[1] = input("Ingrese el nuevo nombre: ")
-                elif opcion == "2":
+                elif opcion == 2:
                     fila[2] = input("Ingrese la nueva direccion: ")
-                elif opcion == "3":
+                elif opcion == 3:
                     fila[3] = captura_correos()
-                elif opcion == "4":
+                elif opcion == 4:
                     fila[4] = captura_telefonos()
-                if opcion == "5":
+                if opcion == 5:
                     fila[5] = captura_fecha()
-                elif opcion == "6":
+                elif opcion == 6:
                     fila[6] = captura_cargo()
-                elif opcion == "7":
+                elif opcion == 7:
                     fila[7] = input("Ingrese la nueva sucursal: ")
                 
         if encontrado:
@@ -87,6 +176,8 @@ def editar_archivo():
         else:
             print("No se ha encontrado ningun empleado con ese ID.")
 
+    input("\nPresione ENTER para continuar")    
+    os.system('clear')
 
 def genera_id(nombre_archivo): # Creo que se puede usar para todos mientras su primer atributo sea ''id''
     with open(nombre_archivo, "r") as archivo:
@@ -98,11 +189,50 @@ def genera_id(nombre_archivo): # Creo que se puede usar para todos mientras su p
             ultimo_id = int(filas[-1][0])
             return ultimo_id + 1
 
+def eliminar_empleado():
+
+    id_empleado = input("Escriba el ID del empleado que busca eliminar: ")
+    
+    with open("empleados.csv", 'r', newline='') as archivo:
+        lector = csv.reader(archivo, delimiter=';')
+        
+        filas_csv = [fila for fila in lector][1:]
+        
+    filas_filtradas = []
+    
+    for fila in filas_csv:
+        if fila[0] == id_empleado:
+            print("\n El empleado con ID {id_empleado} se encontro")
+        else:
+            filas_filtradas.append(fila)
+    
+    if len(filas_filtradas) < len(filas_csv):
+        with open("empleados.csv", 'w', newline='') as archivo:
+            escritor = csv.writer(archivo, delimiter=';')
+            
+            escritor.writerow(['id', 'nombre', 'direccion', 'correos', 'telefonos', 'fechaNacimiento', 'cargo', 'sucursal']) # Debe escribir nuevamenete
+            
+            for fila in filas_filtradas:
+                escritor.writerow(fila)
+                
+        print("Se ha eliminado correctamente al empleado con el ID: {id_empleado}")
+    else:
+        print("\n El empleado con ID {id_empleado} no se encontro")
+    
+    input("\nPresione ENTER para continuar")    
+    os.system('clear')
+
 # Definición de capturas
 
 def captura_correos():
     email_regex = r"[^@]+@[^@]+\.[^@]+" 
-    n = int(input("Ingresa el numero de correos que deseas registrar: "))
+    while True:
+        try:
+            n = int(input("Ingresa el numero de correos que deseas registrar: "))
+            break
+        except ValueError:
+            print("- No es una opcion valida")
+
     correos = []
     for i in range(n):
         correo = input("Ingresa el correo numero {}: ".format(i+1))
@@ -114,7 +244,13 @@ def captura_correos():
     return correo_registro
 
 def captura_telefonos():
-    n = int(input("Ingresa el numero de telefonos que deseas registrar: "))
+    while True:
+        try:
+            n =  int(input("Ingresa el numero de telefonos que deseas registrar: "))
+            break
+        except ValueError:
+            print("- No es una opcion valida")
+
     telefonos = []
     
     for i in range(n):
@@ -125,6 +261,8 @@ def captura_telefonos():
         telefonos.append(telefono)
     telefono_registro = ", ".join(telefonos)
     return telefono_registro
+
+
 
 def captura_fecha():
     fecha_regex = r"\d{2}/\d{2}/\d{4}" 
@@ -154,52 +292,69 @@ def captura_cargo():
         except ValueError:
             print("La opción elegida no es válida. Inténtalo de nuevo.")
 
-
 # Definición de menús
 
 def menu_empleados():
-    while True:
-        #os.system('clear')
+    estatus_menu_empleados = True
+    while estatus_menu_empleados and salir:
+        os.system('clear')
         print("\nMenu Empleados - El Gran Abarrotero")
         print("     1. Realizar una consulta")
         print("     2. Registrar a un nuevo empleado")
         print("     3. Modificar la informacion de un empleado")
-        print("     4. Regresar al menu principal")
-        opcion = input("Seleccione una opcion: ")
+        print("     4. Eliminar el registro de un empleado")
+        print("     5. Regresar al menu principal")
 
-        if opcion == "1":
-            leer_archivo_Empleados()
-        elif opcion == "2":
+        while True:
+            try:
+                opcion = int(input("Seleccione una opcion: "))
+                if opcion < 1 or opcion > 5:
+                    raise ValueError
+                break
+            except ValueError:
+                print("- No es una opcion valida ")
+
+        if opcion == 1:
+            consultas_Empleados()
+        elif opcion == 2:
             escribir_archivo_Empleados()
-        elif opcion == "3":
-            editar_archivo()
-        elif opcion == "4":
+        elif opcion == 3:
+            editar_archivo_empleado()
+        elif opcion == 4:
+            eliminar_empleado()
+        elif opcion == 5:
+            estatus_menu_empleados = False
             menu_principal()
             break
         else:
             print(" - No es una opcion valida")
 
 def menu_principal():
-    global salir
-    while True and salir:
-        #os.system('clear')
+    global salir 
+    while salir:
+        os.system('clear')
         print("\nMenu principal - El Gran Abarrotero")
         print("     1. Empleados")
         print("     2. Sucursales")
         print("     3. Productos")
         print("     4. Salir del programa")
-        opcion = input("Seleccione una opcion: ")
-        if opcion == "1":
+
+        while True:
+            try:
+                opcion = int(input("Seleccione una opcion: "))
+                if opcion < 1 or opcion > 4:
+                    raise ValueError
+                break
+            except ValueError:
+                print("- No es una opcion validas ")
+        if opcion == 1:
             menu_empleados()
-        elif opcion == "2":
+        elif opcion == 2:
             pass
-        elif opcion == "3":
+        elif opcion == 3:
             pass
-        elif opcion == "4":
+        elif opcion == 4:
             salir = False
             break
-        else:
-            print(" - No es una opcion valida")
-
-while salir:
-    menu_principal()
+        
+menu_principal()

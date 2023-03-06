@@ -1,1 +1,3 @@
-"id";"nombre";"direccion";"correos";"telefonos";"fechaNacimiento";"cargo";"sucursal"
+id;nombre;direccion;correos;telefonos;fechaNacimiento;cargo;sucursal
+1;EmpleadoUno;Calle Uno;uno@uno.com;1234567890;01/01/2001;Encargado;1
+2;EmpleadoDos;Calle Dos;dos@dos.com;1234567890;02/07/2002;Gerente;2
