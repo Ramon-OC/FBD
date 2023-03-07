@@ -430,14 +430,18 @@ def leer_archivo_productos():
     path = Path(__file__).parent / "productos.csv"
     try:
         with path.open('r') as archivo:
-            reader = csv.DictReader(archivo, delimiter=';')
+            reader = csv.DictReader(archivo, delimiter=',')
             for row in reader:
                 k = row["nombre"]+row["sucursal"]
                 prod_dict[k] = row
                 #for string in row:
                     #print(string+":", {row[string]})
     except FileNotFoundError:
-        print(" - El archivo no existe.")
+        try:
+            with path.open('w') as archivo:
+                escribir_archivo_productos()
+        except FileNotFoundError:
+            print("No se pudo abrir ni crear el archivo productos.csv")
 
 def escribir_archivo_productos():
     prod_attr = ["nombre","precio","cantidad","marca","presentacion","sucursal","stock","refrigeracion","elaboracion","caducidad"]
