@@ -250,6 +250,28 @@ def eliminar_empleado():
     input("\nPresione ENTER para continuar")    
     os.system('clear')
 
+def correo_registrado(correo_nuevo):
+     existe = False
+     with open("empleados.csv", "r") as archivo_csv:
+        lector_csv = csv.reader(archivo_csv, delimiter=";")    
+        filas = []
+        for fila in lector_csv:
+            filas.append(fila)
+        
+        for fila in filas:
+            if fila[3] == "correos": # Ignora la primera fila (atributos)
+                continue 
+            if fila[3].find(correo_nuevo)!= -1:
+                existe = True  
+                print("Hay un correo repetido")
+        
+        return existe     
+ 
+
+
+       
+    
+
 # Definición de capturas
 
 def captura_correos():
@@ -268,9 +290,13 @@ def captura_correos():
     correos = []
     for i in range(n):
         correo = input("Ingresa el correo numero {}: ".format(i+1))
-        while not re.match(email_regex, correo): 
+        while not re.match(email_regex, correo) : 
             print(" - No es un correo valido")
             correo = input("Ingresa el correo numero {}: ".format(i+1))
+        while correo_registrado(correo):
+            print(" - Ya hay un usuario con ese correo")
+            correo = input("Ingresa el correo numero {}: ".format(i+1))
+        
         correos.append(correo)
     correo_registro = ", ".join(correos) # Debemos respetar el ; del .csv
     return correo_registro
@@ -443,7 +469,6 @@ def agregar_producto():
     elaboracion = validar_fecha("Introduzca fecha de caducidad en formato YYYY-MM-DD: ","Intente de nuevo.")
     caducidad = validar_fecha("Introduzca fecha de caducidad en formato YYYY-MM-DD :","Intente de nuevo.")
     prod_dict[nombre + str(sucursal)] = {"nombre" : nombre,"precio" : precio,"cantidad" : cantidad,"marca" : marca,"presentacion" : presentacion,"sucursal" : sucursal,"stock" : stock,"refrigeracion" : refrigeracion,"elaboracion" : elaboracion,"caducidad":caducidad}
-
 
 def validar_fecha(mensaje,error):
     while True:
