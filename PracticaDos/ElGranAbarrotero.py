@@ -5,6 +5,11 @@ from pathlib import Path
 salir = True
 prod_dict = {}
 
+def clear():
+    if os.name == "nt":
+        os.system("cls")
+    else:
+        os.system("clear")
 
 def leer_archivo_Empleados():
     """
@@ -419,7 +424,7 @@ def menu_principal():
         if opcion == 1:
             menu_empleados()
         elif opcion == 2:
-            pass
+            menu_sucursales()
         elif opcion == 3:
             menu_productos()
         elif opcion == 4:
@@ -549,5 +554,212 @@ def menu_productos():
         else:
             print(" - No es una opcion valida")
 
+   #Sucursales
+def leer_archivo_Sucursales():
+    try:
+        with open('sucursales.csv', 'r') as archivo:
+            reader = csv.DictReader(archivo, delimiter=';')
+            for row in reader:
+                print(f"Id: {row['id']}, Nombre: {row['nombre']}, Direccion: {row['direccion']}, Telefonos: {row['telefonos']}, Fecha de Apertura: {row['apertura']}")
+    except FileNotFoundError:
+        print("- El archivo sucursales.csv no existe")
+    
+    input("\nPresione ENTER para continuar")    
+    clear()
+
+def escribir_archivo_Sucursales():
+    clear()
+    id = genera_id("sucursales.csv")
+    nombre = input("Escriba el nombre de la sucursal: ")
+    direccion = input("Escriba la dirección de la sucursal: ")
+    telefonos = captura_telefonos()
+    fechaApertura = captura_fecha()
+
+    with open('sucursales.csv', 'a', newline='') as archivo:
+        writer = csv.writer(archivo, delimiter=';')
+        writer.writerow([id, nombre, direccion, telefonos, fechaApertura])
+    print("Se ha registrado a "+nombre+" correctamente!\nSu ID es: "+str(id))
+    
+    input("\nPresione ENTER para continuar")    
+    clear()
+
+def editar_archivo_Sucursales():
+    clear()
+
+    id_buscar = input("Ingrese el ID de la sucursal que desea editar: ")
+    encontrado = False
+    
+    with open("sucursales.csv", "r") as archivo_csv:
+        lector_csv = csv.reader(archivo_csv, delimiter=";")
         
+        filas = []
+        for fila in lector_csv:
+            filas.append(fila)
+        
+        for fila in filas:
+            if fila[0] == "id":
+                continue 
+            if fila[0] == id_buscar:
+                encontrado = True
+                print("   Información de la sucursal:")
+                print(" - Id: ", fila[0])
+                print(" - Nombre: ", fila[1])
+                print(" - Direccion: ", fila[2])
+                print(" - Telefonos: ", fila[3])
+                print(" - Fecha de Apertura: ", fila[4])
+
+                print("\n¿Que informacion deseas modificar?")
+                print("     1. Nombre")
+                print("     2. Direccion")
+                print("     3. Telefonos")
+                print("     4. Fecha de Apertura")
+
+
+                while True:
+                    try:
+                        opcion = int(input("Seleccione una opcion: "))
+                        if opcion < 1 or opcion > 7:
+                            raise ValueError
+                        break
+                    except ValueError:
+                        print("- No es una opcion valida ")
+
+
+                if opcion == 1:
+                    fila[1] = input("Ingrese el nuevo nombre: ")
+                elif opcion == 2:
+                    fila[2] = input("Ingrese la nueva direccion: ")
+                elif opcion == 3:
+                    fila[3] = captura_telefonos()
+                elif opcion == 4:
+                    fila[4] = captura_fecha()
+
+                
+        if encontrado:
+            with open("sucursales.csv", "w", newline="") as archivo_csv:
+                escritor_csv = csv.writer(archivo_csv, delimiter=";")
+                escritor_csv.writerows(filas)
+                print("La informacion de la sucursal ha sido actualizada correctamente")
+        else:
+            print("No se ha encontrado ninguna sucursal con ese ID.")
+
+    input("\nPresione ENTER para continuar")    
+    clear()
+
+def genera_id(nombre_archivo): # Creo que se puede usar para todos mientras su primer atributo sea ''id''
+    with open(nombre_archivo, "r") as archivo:
+        lector_csv = csv.reader(archivo, delimiter=";")
+        filas = list(lector_csv)
+        if not filas[1:]:
+            return 1
+        else:
+            ultimo_id = int(filas[-1][0])
+            return ultimo_id + 1
+
+def eliminar_sucursales():
+
+    id  = input("Escriba el ID de la sucursal que busca eliminar: ")
+    
+    with open("sucursales.csv", 'r', newline='') as archivo:
+        lector = csv.reader(archivo, delimiter=';')
+        
+        filas_csv = [fila for fila in lector][1:]
+        
+    filas_filtradas = []
+    
+    for fila in filas_csv:
+        if fila[0] == id:
+            print("\n La sucursal con ID {id se encontro")
+        else:
+            filas_filtradas.append(fila)
+    
+    if len(filas_filtradas) < len(filas_csv):
+        with open("sucursales.csv", 'w', newline='') as archivo:
+            escritor = csv.writer(archivo, delimiter=';')
+            
+            escritor.writerow(['id', 'nombre', 'direccion', 'telefonos', 'apertura', 'sucursal']) # Debe escribir nuevamenete
+            
+            for fila in filas_filtradas:
+                escritor.writerow(fila)
+                
+        print("Se ha eliminado correctamente a la sucursal con el ID: {id}")
+    else:
+        print("\n La sucursal con ID {id_sucursal} no se encontro")
+    
+    input("\nPresione ENTER para continuar")    
+    clear()
+
+# Definición de capturas
+
+def captura_telefonos():
+    while True:
+        try:
+            n =  int(input("Ingresa el numero de telefonos que deseas registrar: "))
+            break
+        except ValueError:
+            print("- No es una opcion valida")
+
+    telefonos = []
+    
+    for i in range(n):
+        telefono = input("Ingresa el telefono numero {}: ".format(i+1))
+        while len(telefono) != 10: # Solo verficamos que tenga diez dígitos
+            print("- No es un telefono valido")
+            telefono = input("Ingresa el teléfono numero {}: ".format(i+1))
+        telefonos.append(telefono)
+    telefono_registro = ", ".join(telefonos)
+    return telefono_registro
+
+
+
+def captura_fecha():
+    fecha_regex = r"\d{2}/\d{2}/\d{4}" 
+    while True:
+        fecha = input("Ingresa tu fecha en formato dd/mm/aaaa: ")
+        if re.match(fecha_regex, fecha): 
+            try:
+                fecha_dt = datetime.strptime(fecha, "%d/%m/%Y")
+                return fecha_dt.strftime("%d/%m/%Y")
+            except ValueError: 
+                print("- No es una fecha valida")
+        else: 
+            print("La fecha no tiene el formato dd/mm/aaaa.")
+
+
+def menu_sucursales():
+    estatus_menu_sucursales = True
+    while estatus_menu_sucursales and salir:
+        clear()
+        print("\nMenu Sucursales - El Gran Abarrotero")
+        print("     1. Realizar una consulta")
+        print("     2. Registrar nueva sucursal")
+        print("     3. Modificar la informacion de Sucursal")
+        print("     4. Eliminar el registro de una Sucursal")
+        print("     5. Regresar al menu principal")
+
+        while True:
+            try:
+                opcion = int(input("Seleccione una opcion: "))
+                if opcion < 1 or opcion > 5:
+                    raise ValueError
+                break
+            except ValueError:
+                print("- No es una opcion valida ")
+
+        if opcion == 1:
+            leer_archivo_Sucursales()
+        elif opcion == 2:
+            escribir_archivo_Sucursales()
+        elif opcion == 3:
+            editar_archivo_Sucursales()
+        elif opcion == 4:
+            eliminar_sucursales()
+        elif opcion == 5:
+            estatus_menu_sucursales = False
+            menu_principal()
+            break
+        else:
+            print(" - No es una opcion valida")
+            
+            
 menu_principal()
